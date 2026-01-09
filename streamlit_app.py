@@ -3,6 +3,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import urllib.parse
 
+# ================= PAGE CONFIG =================
 st.set_page_config(page_title="ProWashCare – Aanvraag", layout="centered")
 st.title("🧼 ProWashCare – Aanvraagformulier")
 st.write("Vraag vrijblijvend een reiniging aan. Wij nemen snel contact met u op.")
@@ -131,7 +132,10 @@ if not st.session_state.aanvragen:
 else:
     for i, item in enumerate(st.session_state.aanvragen):
         col1, col2 = st.columns([9,1])
-        col1.markdown(f"**{item['titel']}**\n\n{item['details'].replace('\n','  \n')}")
+
+        details_tekst = item["details"].replace("\n", "  \n")
+        col1.markdown(f"**{item['titel']}**\n\n{details_tekst}")
+
         if col2.button("❌", key=f"del_{i}"):
             st.session_state.aanvragen.pop(i)
             st.rerun()
@@ -146,7 +150,10 @@ if st.button("📩 Aanvraag verzenden"):
     else:
         try:
             volledig_adres = f"{straat}, {postcode} {gemeente}"
-            maps_link = "https://www.google.com/maps/search/?api=1&query=" + urllib.parse.quote_plus(volledig_adres)
+            maps_link = (
+                "https://www.google.com/maps/search/?api=1&query="
+                + urllib.parse.quote_plus(volledig_adres)
+            )
 
             inhoud = ""
             for item in st.session_state.aanvragen:
